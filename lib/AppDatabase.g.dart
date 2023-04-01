@@ -103,7 +103,8 @@ class _$QuestionAnswerDao extends QuestionAnswerDao {
   _$QuestionAnswerDao(
     this.database,
     this.changeListener,
-  ) : _questionAnswerEntityInsertionAdapter = InsertionAdapter(
+  )   : _queryAdapter = QueryAdapter(database, changeListener),
+        _questionAnswerEntityInsertionAdapter = InsertionAdapter(
             database,
             'table_user',
             (QuestionAnswerEntity item) => <String, Object?>{
@@ -114,14 +115,48 @@ class _$QuestionAnswerDao extends QuestionAnswerDao {
                   'optionThird': item.optionThird,
                   'optionFour': item.optionFour,
                   'answer': item.answer
-                });
+                },
+            changeListener);
 
   final sqflite.DatabaseExecutor database;
 
   final StreamController<String> changeListener;
 
+  final QueryAdapter _queryAdapter;
+
   final InsertionAdapter<QuestionAnswerEntity>
       _questionAnswerEntityInsertionAdapter;
+
+  @override
+  Stream<QuestionAnswerEntity?> findQuestionByLevel(int level) {
+    return _queryAdapter.queryStream(
+        'SELECT * FROM table_user WHERE level = ?1',
+        mapper: (Map<String, Object?> row) => QuestionAnswerEntity(
+            level: row['level'] as int?,
+            Question: row['Question'] as String,
+            optionFirst: row['optionFirst'] as String,
+            optionSecond: row['optionSecond'] as String,
+            optionThird: row['optionThird'] as String,
+            optionFour: row['optionFour'] as String,
+            answer: row['answer'] as String),
+        arguments: [level],
+        queryableName: 'table_user',
+        isView: false);
+  }
+
+  @override
+  Future<QuestionAnswerEntity?> findQuestionByLevelDetail(int level) async {
+    return _queryAdapter.query('SELECT * FROM table_user WHERE level = ?1',
+        mapper: (Map<String, Object?> row) => QuestionAnswerEntity(
+            level: row['level'] as int?,
+            Question: row['Question'] as String,
+            optionFirst: row['optionFirst'] as String,
+            optionSecond: row['optionSecond'] as String,
+            optionThird: row['optionThird'] as String,
+            optionFour: row['optionFour'] as String,
+            answer: row['answer'] as String),
+        arguments: [level]);
+  }
 
   @override
   Future<int> insertQuestionAnswer(QuestionAnswerEntity questionAnswerEntity) {

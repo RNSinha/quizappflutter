@@ -6,6 +6,7 @@ import 'package:quizapp/secondques.dart';
 import 'package:quizapp/sixques.dart';
 import 'package:quizapp/thirdques.dart';
 import 'fourthques.dart';
+import 'hardlevel/firsthardlevel.dart';
 import 'home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -117,6 +118,9 @@ class SecondScreen extends StatelessWidget {
            ),
            Center(
              child:  startButton(flags: 'HARD'),
+           ),
+           Center(
+             child:  startButton(flags: 'ADMIN'),
            ),
          ],
       ),
@@ -235,10 +239,20 @@ void getStringValuesSF(BuildContext context, String flags) async {
         Navigator.push(
           context,
           MaterialPageRoute(
+              builder: (context) => const FirstHardLevel()), //// change login with home
+        );
+
+      }
+      if(flags == "ADMIN") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
               builder: (context) => const InsertDetailDatabase()), //// change login with home
         );
 
       }
+
+
 }
 
 
